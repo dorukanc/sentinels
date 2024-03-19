@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinels</title>
+</head>
+<body>
+    <h1>Pandemic Simulation Codename: Sentinels</h1>
+    <form id="simulation-form">
+        <!-- Input fields for simulation parameters -->
+        <!-- Add input fields for population size, initial infected, transmission rate, mortality rate, recovery time -->
+        <label for="population_size">Population Size:</label>
+        <input type="number" id="population_size" name="population_size" required><br>
+
+        <label for="initial_infected">Initial Infected:</label>
+        <input type="number" id="initial_infected" name="initial_infected" required><br>
+
+        <label for="transmission_rate">Transmission Rate:</label>
+        <input type="number" id="transmission_rate" name="transmission_rate" step="0.01" required><br>
+
+        <label for="mortality_rate">Mortality Rate:</label>
+        <input type="number" id="mortality_rate" name="mortality_rate" step="0.01" required><br>
+
+        <label for="recovery_time">Recovery Time (days):</label>
+        <input type="number" id="recovery_time" name="recovery_time" required><br>
+
+        <button type="submit">Simulate</button>
+    </form>
+    
+    <!-- Container to display simulation results -->
+    <div id="simulation-results"></div>
+
+    <script>
+        // JavaScript code to handle form submission and update the UI with simulation results
+        document.getElementById('simulation-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+
+            fetch('/simulate', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update UI with simulation results
+                document.getElementById('simulation-results').innerHTML = `
+                    <h2>Simulation Results</h2>
+                    <!-- Display simulation data received from the server -->
+                    <p>Days Elapsed: ${data[0].days_elapsed}</p>
+                    <p>New Infections: ${data[0].new_infections}</p>
+                    <p>New Deaths: ${data[0].new_deaths}</p>
+                    <p>Total Infected: ${data[0].total_infected}</p>
+                `;
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>

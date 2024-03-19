@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import random
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 
 class virus_simulation:
     def __init__(self, population_size, initial_infected, transmission_rate, mortality_rate, recovery_time):
@@ -44,31 +44,23 @@ class virus_simulation:
 
         self.days_elapsed +=1
         return new_infections, new_deaths
-"""
-    def apply_event(self, event_type):
-        if event_type == 'lockdown':
-            self.transmission_rate *= 0.7 # spread rate decreased by 30%
-        elif event_type == 'vaccine':
-            self.transmission_rate *= 0.5 # spread rate decreased by 50%
-        elif event_type == 'mutation':
-            self.transmission_rate *= 1.5 # spread rate increased by 50%
-        elif event_type == 'mask':
-            self.transmission_rate *= 0.82 # spread rate decreased by 18%
-"""
 
 @app.route('/')
 def index():
     return render_template('index.html')
+
 @app.route('/simulate', methods=['POST'])
-def main():
+def simulation():
     # Retrieve parameters from the UI form
-    population_size = 1000000
-    initial_infected = 10
-    transmission_rate = 0.1 # Initial r value
-    mortality_rate = 0.1
-    recovery_time = 14 # Two weeks for recovery
+    population_size = int(request.form['population_size'])
+    initial_infected = int(request.form['initial_infected'])
+    transmission_rate = float(request.form['transmission_rate'])
+    mortality_rate = float(request.form['mortality_rate'])
+    recovery_time = int(request.form['recovery_time'])
 
     simulation = virus_simulation(population_size, initial_infected, transmission_rate, mortality_rate, recovery_time)
+
+    simulation_data_list = []
 
     while simulation.population_state.count('infected') > 0 and ('healthy' in simulation.population_state or 'infected' in simulation.population_state):
         new_infections, new_deaths = simulation.simulate_day()
@@ -76,7 +68,17 @@ def main():
         infected_count = simulation.population_state.count('infected')
         print(f"Infected people: {infected_count:.0f}")
 
-    return jsonify()
+        # Simulation data to send the user interface
+        simulation_data = {
+        'days_elapsed' : simulation.days_elapsed,
+        'new_infections' : new_infections,
+        'new deaths' : new_deaths,
+        'total_infected' : infected_count
+        }
+
+        simulation_data_list.append(simulation_data)
+
+    return jsonify(simulation_data_list)
 
 if __name__ == "__main__":
     app.run(debug=True)
