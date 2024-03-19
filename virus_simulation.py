@@ -1,4 +1,7 @@
+from flask import Flask, render_template, request, jsonify
 import random
+
+app = Flask(__name__)
 
 class virus_simulation:
     def __init__(self, population_size, initial_infected, transmission_rate, mortality_rate, recovery_time):
@@ -52,8 +55,13 @@ class virus_simulation:
         elif event_type == 'mask':
             self.transmission_rate *= 0.82 # spread rate decreased by 18%
 """
-def main():
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+@app.route('/simulate', methods=['POST'])
+def main():
+    # Retrieve parameters from the UI form
     population_size = 1000000
     initial_infected = 10
     transmission_rate = 0.1 # Initial r value
@@ -68,5 +76,7 @@ def main():
         infected_count = simulation.population_state.count('infected')
         print(f"Infected people: {infected_count:.0f}")
 
+    return jsonify()
+
 if __name__ == "__main__":
-    main()
+    app.run(debug=True)
