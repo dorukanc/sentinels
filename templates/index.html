@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sentinels</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
+
 </head>
 <body>
     <h1>Pandemic Simulation Codename: Sentinels</h1>
@@ -28,33 +30,59 @@
         <button type="submit">Simulate</button>
     </form>
     
-    <!-- Container to display simulation results -->
-    <div id="simulation-results"></div>
+<!-- Container to display simulation results -->
+<div id="simulation-results">
+    <h2>Simulation Results</h2>
+        <p>Days Elapsed: </p>
+        <p>New Infections: </p>
+        <p>New Deaths: </p>
+        <p>Total Infected: </p>
+</div>
 
-    <script>
-        // JavaScript code to handle form submission and update the UI with simulation results
-        document.getElementById('simulation-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            var formData = new FormData(this);
+<script>
+    // JavaScript code to handle form submission and update the UI with simulation results
+    document.getElementById('simulation-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var formData = new FormData(this);
 
-            fetch('/simulate', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Update UI with simulation results
-                document.getElementById('simulation-results').innerHTML = `
-                    <h2>Simulation Results</h2>
-                    <!-- Display simulation data received from the server -->
-                    <p>Days Elapsed: ${data[0].days_elapsed}</p>
-                    <p>New Infections: ${data[0].new_infections}</p>
-                    <p>New Deaths: ${data[0].new_deaths}</p>
-                    <p>Total Infected: ${data[0].total_infected}</p>
-                `;
-            })
-            .catch(error => console.error('Error:', error));
-        });
-    </script>
+        fetch('/simulate', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Initialize a counter for tracking the current day
+            let currentDay = 0;
+
+            // Function to display simulation results for the current day
+            function displayResults() {
+                if (currentDay < data.length) {
+                    const simulationData = data[currentDay];
+                    const resultsHtml = `
+                        <h2>Simulation Results</h2>
+                        <p>Days Elapsed: ${simulationData.days_elapsed}</p>
+                        <p>New Infections: ${simulationData.new_infections}</p>
+                        <p>New Deaths: ${simulationData.new_deaths}</p>
+                        <p>Total Infected: ${simulationData.total_infected}</p>
+                    `;
+
+                    // Update UI with results for the current day
+                    document.getElementById('simulation-results').innerHTML = resultsHtml;
+
+                    // Increment the day counter
+                    currentDay++;
+
+                    // Wait for a brief interval (e.g., 1000 milliseconds) before displaying the next day's results
+                    setTimeout(displayResults, 1000);
+                }
+            }
+
+            // Start displaying results
+            displayResults();
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
+
 </body>
 </html>

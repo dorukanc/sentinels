@@ -1,0 +1,70 @@
+/* Styles for mobile-friendly layout and design */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+h1 {
+    text-align: center;
+}
+
+form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="number"] {
+    width: calc(100% - 10px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 25px;
+    background-color: #3498db;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #2980b9;
+}
+
+#simulation-results {
+    margin-top: 20px;
+}
+
+#simulation-results {
+    margin: 20px auto;
+    max-width: 400px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+p {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
