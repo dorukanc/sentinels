@@ -1,12 +1,12 @@
 import random
 
 class virus_simulation:
-    def __init__(self, population_size, initial_infected, transmission_rate, mortality_rate, recovery_time):
+    def __init__(self, population_size, initial_infected, transmission_rate, mortality_rate, recovery_rate):
         self.population_size = population_size
         self.transmission_rate = transmission_rate
         self.infected_count = initial_infected
         self.mortality_rate = mortality_rate
-        self.recovery_time = recovery_time
+        self.recovery_rate = recovery_rate
         self.population_state = ['healthy'] * population_size
 
         # Randomly distribute initial infected to the population
@@ -24,15 +24,19 @@ class virus_simulation:
                     self.population_state[i] = 'dead'
                     new_deaths += 1
                 else:
-                    if self.days_elapsed - self.recovery_time >= 0 and self.population_state[self.days_elapsed - self.recovery_time] == 'infected':
+                    # calculating recovery prob rate 
+                    recovery_prob = 1 - self.recovery_rate
+                    if random.random() < recovery_prob:
                         self.population_state[i] = 'healthy'
-                        new_infections -= 1
+                        self.infected_count -= 1
+
             elif self.population_state[i] == 'healthy':
                 # infecting nearby people
                 for j in range(max(0, i-2), min(self.population_size, i+3)):
                     if self.population_state[j] == 'infected' and random.random() < self.transmission_rate:
                         self.population_state[j] = 'infected'
                         new_infections += 1
+                        self.infected_count += new_infections
                         break
 
         # Update infected count after processing each individual
@@ -48,9 +52,9 @@ def main():
     initial_infected = 10
     transmission_rate = 0.1 # Initial r value
     mortality_rate = 0.1
-    recovery_time = 14 # Two weeks for recovery
+    recovery_rate = 14 # Two weeks for recovery
 
-    simulation = virus_simulation(population_size, initial_infected, transmission_rate, mortality_rate, recovery_time)
+    simulation = virus_simulation(population_size, initial_infected, transmission_rate, mortality_rate, recovery_rate)
 
     while simulation.population_state.count('infected') > 0 and ('healthy' in simulation.population_state or 'infected' in simulation.population_state):
         new_infections, new_deaths = simulation.simulate_day()
