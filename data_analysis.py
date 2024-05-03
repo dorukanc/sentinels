@@ -2,37 +2,30 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Loading the csv file
 
-df = pd.read_csv('data/covid19_mortalityrate_weekly_oecd.csv')
-
-# Checking the first few rows to ensure our data loaded correctly
+# Read the xlsx file
+df = pd.read_excel("./data/covidcases-byagegender.xlsx")
 print(df.head())
 
-# filtering the data, pt_dt (percentage of death total)
+# Draw a bar chart because this is a categorical data
 
-filtered_pt_data = df[df['UNIT_MEASURE'] == 'PT_DT']
+# Set the figure size
+plt.figure(figsize=(10, 6))
 
-# extracting data from filtered data
-obs_value = filtered_pt_data['OBS_VALUE']
+# Define the age groups and their positions on the x-axis
+age_groups = df['Age Groups']
+x = np.arange(len(age_groups))
 
-# mean, median, std of our data
+# Plot the bars for Men and Women
+plt.bar(x - 0.2, df['Men'], width=0.4, label='Men', color='skyblue', edgecolor='black')
+plt.bar(x + 0.2, df['Women'], width=0.4, label='Women', color='salmon', edgecolor='black')
 
-mean_value = obs_value.mean()
-median_value = obs_value.median()
-std_value = obs_value.std()
+# Customize the plot
+plt.xlabel('Age Group')
+plt.ylabel('Population')
+plt.title('Hospitalized by Age Group (Men vs. Women) Covid-19 Germany')
+plt.xticks(x, age_groups, rotation=45)
+plt.legend()
 
-# Plotting the mortality rate to a graph weekly
-# Created a line plot to visualize mortality rate (pt_dt)
-plt.figure(figsize=(8,6))
-plt.plot(filtered_pt_data['OBS_VALUE'], marker='o', linestyle='-', color='b')
-plt.xlabel("Week")
-plt.ylabel("Mortality Rate")
-plt.title("Weekly Covid-19 Mortality Rate")
-plt.grid()
+plt.tight_layout()
 plt.show()
-
-# Print the results
-print(f"Mean: {mean_value:.2f}")
-print(f"Median: {median_value:.2f}")
-print(f"Standard Deviation: {std_value:.2f}")
